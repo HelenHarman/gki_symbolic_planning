@@ -76,6 +76,9 @@ class ContinualPlanning
 
         void reset();
 
+        void getLog(std::ostringstream& log) { log << log_.str(); }
+        int getNumReplanning() { return num_replanning_ ;}
+
     protected:
         /// Return a plan that reaches the goal.
         /**
@@ -110,6 +113,9 @@ class ContinualPlanning
         bool _initialStateEstimated;
 
         StatusPublisher _status;
+
+        std::ostringstream log_;
+        int num_replanning_;
 };
 
 #endif

@@ -124,6 +124,8 @@ int main(int argc, char** argv)
 
     s_ContinualPlanning = new ContinualPlanning();
 
+    double start_time = ros::WallTime::now().toSec();
+
     if(! load_plugins(s_ContinualPlanning)) {
         ROS_FATAL("Init failed.");
         return 1;
@@ -171,6 +173,22 @@ int main(int argc, char** argv)
         loopSleep.sleep();
     }
 
+    double end_time = ros::WallTime::now().toSec();
+    std::ostringstream log;
+    log.precision(3);
+    log << std::fixed;
+    s_ContinualPlanning->getLog(log);
+    std::string path = ros::package::getPath("experiments_evaluation") + "/eval/";
+    std::string fileName = "test.eval";
+    path += fileName;
+    ROS_INFO("PATH: %s", path.c_str());
+    std::ofstream file(path.c_str());
+    file.precision(3);
+    file << std::fixed;
+    if (!file.is_open())
+    	ROS_ERROR("Evaluation could not be written!");
+    ROS_INFO("Evaluation written to %s", path.c_str());
+
     if(s_ContinualPlanning->isGoalFulfilled() || cpState == ContinualPlanning::FinishedAtGoal) {
         std::stringstream ss2;
         ss2 << "\n\nContinual planning ended.\n";
@@ -179,16 +197,35 @@ int main(int argc, char** argv)
         if(cpState == ContinualPlanning::FinishedAtGoal)
             ss2 << "ContinualPlanningState: FinishedAtGoal!\n";
         ss2 << "\n";
+
+
+        file << "start_time: " << start_time << "\n";
+        file << "end_time: " << end_time << "\n";
+        file << "execution time: " << end_time - start_time << "\n";
+        file << "\n";
+		int replanning = s_ContinualPlanning->getNumReplanning();
+		file << "Number of replannings: " << replanning << "\n";
+		file << "\n";
+		file << log.str() << std::endl << ss2.str();
+		file << "\n";
+
+
+
         if(ros::ok())
             ROS_INFO("%s", ss2.str().c_str());
         else
             printf("%s", ss2.str().c_str());
     } else {
+
+		file << log.str() << std::endl << "\n\nContinual planning ended.\nGOAL was NOT REACHED.\n\n";
+
         if(ros::ok())
             ROS_ERROR("\n\nContinual planning ended.\nGOAL was NOT REACHED.\n\n");
         else
             printf("\n\nContinual planning ended.\nGOAL was NOT REACHED.\n\n\n");
     }
+
+    file.close();
 
     return 0;
 }

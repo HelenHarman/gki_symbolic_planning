@@ -9,6 +9,10 @@ ContinualPlanning::ContinualPlanning()
     _allowDirectGoalCheck = false;      // OK, we do this via monitoring
     _forceReplan = true;
     _initialStateEstimated = false;
+
+    num_replanning_ = 0;
+    log_.precision(3);
+    log_ << std::fixed;
 }
 
 ContinualPlanning::~ContinualPlanning()
@@ -89,11 +93,16 @@ ContinualPlanning::ContinualPlanningState ContinualPlanning::loop()
     if(!_planExecutor.executeBlocking(_currentPlan, _currentState, executedActions)) {
         _status.finishedExecution(false, _currentPlan.actions.front());
         ROS_ERROR_STREAM("No action was executed for current plan:\n" << _currentPlan << "\nWaiting for 10 sec...");
+
+        log_ << "ERR: " << ros::WallTime::now().toSec() << " \t" << _currentPlan.actions.front() << std::endl;
+
         _forceReplan = true;        // force here in the hope that it fixes something.
         ros::WallDuration sleep(10.0);
         sleep.sleep();
     } else {
         _status.finishedExecution(true, _currentPlan.actions.front());
+
+        log_ << "SUC: " << ros::WallTime::now().toSec() << " \t" << _currentPlan.actions.front() << std::endl;
     }
 
     // remove executedActions from plan
@@ -172,7 +181,12 @@ Plan ContinualPlanning::monitorAndReplan(bool & atGoal)
                 continual_planning_msgs::ContinualPlanningStatus::INACTIVE, "-");
         return _currentPlan;
     }
+
+    double start_plan = ros::WallTime::now().toSec();
+
     _status.finishedMonitoring(false);  // need replanning -> monitoring false
+
+    num_replanning_++;
 
     // REPLAN
     Plan plan;
@@ -191,6 +205,10 @@ Plan ContinualPlanning::monitorAndReplan(bool & atGoal)
                 continual_planning_executive::PlannerInterface::PlannerResultStr(result).c_str());
         _status.finishedPlanning(false, plan);
     }
+    double end_plan = ros::WallTime::now().toSec();
+    log_ << "(RE-)PLANNING \t" << end_plan - start_plan << std::endl;
+
+
     return plan;
 }
 
