@@ -195,6 +195,9 @@ Plan ContinualPlanning::monitorAndReplan(bool & atGoal)
         _planner->plan(_currentState, _goal, plan);
     _forceReplan = false;       // did replanning
 
+    double end_plan = ros::WallTime::now().toSec();
+    log_ << "(RE-)PLANNING \t" << end_plan - start_plan << std::endl;
+
     if(result == continual_planning_executive::PlannerInterface::PR_SUCCESS
             || result == continual_planning_executive::PlannerInterface::PR_SUCCESS_TIMEOUT) {
         ROS_INFO_STREAM("Planning successfull. Got plan:" << std::endl
@@ -204,9 +207,9 @@ Plan ContinualPlanning::monitorAndReplan(bool & atGoal)
         ROS_ERROR("Planning failed, result: %s",
                 continual_planning_executive::PlannerInterface::PlannerResultStr(result).c_str());
         _status.finishedPlanning(false, plan);
+
+        log_ << "Planning failed, result: " << continual_planning_executive::PlannerInterface::PlannerResultStr(result) << "\n";
     }
-    double end_plan = ros::WallTime::now().toSec();
-    log_ << "(RE-)PLANNING \t" << end_plan - start_plan << std::endl;
 
 
     return plan;

@@ -179,15 +179,31 @@ int main(int argc, char** argv)
     log << std::fixed;
     s_ContinualPlanning->getLog(log);
     std::string path = ros::package::getPath("experiments_evaluation") + "/eval/";
-    std::string fileName = "test.eval";
+//    std::string fileName = "test.eval";
+    std::string fileName;
+    ros::param::get("evaluation", fileName);
     path += fileName;
     ROS_INFO("PATH: %s", path.c_str());
     std::ofstream file(path.c_str());
     file.precision(3);
     file << std::fixed;
     if (!file.is_open())
-    	ROS_ERROR("Evaluation could not be written!");
-    ROS_INFO("Evaluation written to %s", path.c_str());
+    {
+    	if (fileName == "")
+    		ROS_WARN("No Evaluation is written, since filename is empty");
+    	else
+    		ROS_ERROR("Evaluation could not be written!");
+    }
+    else
+    	ROS_INFO("Evaluation written to %s", path.c_str());
+
+	file << "start_time: " << start_time << "\n";
+	file << "end_time: " << end_time << "\n";
+	file << "execution time: " << end_time - start_time << "\n";
+	file << "\n";
+	int replanning = s_ContinualPlanning->getNumReplanning();
+	file << "Number of replannings: " << replanning << "\n";
+	file << "\n";
 
     if(s_ContinualPlanning->isGoalFulfilled() || cpState == ContinualPlanning::FinishedAtGoal) {
         std::stringstream ss2;
@@ -199,13 +215,6 @@ int main(int argc, char** argv)
         ss2 << "\n";
 
 
-        file << "start_time: " << start_time << "\n";
-        file << "end_time: " << end_time << "\n";
-        file << "execution time: " << end_time - start_time << "\n";
-        file << "\n";
-		int replanning = s_ContinualPlanning->getNumReplanning();
-		file << "Number of replannings: " << replanning << "\n";
-		file << "\n";
 		file << log.str() << std::endl << ss2.str();
 		file << "\n";
 
