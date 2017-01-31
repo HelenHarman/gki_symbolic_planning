@@ -32,6 +32,7 @@
 class ContinualPlanning
 {
     public:
+    typedef boost::shared_ptr<ContinualPlanning> Ptr;
         friend void signal_handler(int);
 
         enum ContinualPlanningState {

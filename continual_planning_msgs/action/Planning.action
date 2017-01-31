@@ -1,0 +1,10 @@
+# request
+string goal
+---
+# result
+TemporalAction[] plan
+time start_time
+duration duration
+---
+# feedback
+float64 best_heuristic_value

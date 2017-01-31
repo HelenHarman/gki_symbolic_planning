@@ -5,12 +5,14 @@ find_package(catkin REQUIRED COMPONENTS
     roscpp
     rospy
     std_msgs
+    actionlib
     message_generation
 )
 add_message_files(
 	FILES
 	ContinualPlanningStatus.msg  
 	TemporalAction.msg
+	ExecutedActivity.msg
 )
 
 add_service_files(
@@ -19,8 +21,15 @@ add_service_files(
 	SetContinualPlanningControl.srv
 )
 
+## Generate actions in the 'action' folder
+add_action_files(
+  FILES
+  Planning.action
+)
+
 generate_messages(
    DEPENDENCIES
+   actionlib_msgs
    std_msgs  # Or other packages containing msgs
 )
 
