@@ -88,10 +88,10 @@ ContinualPlanning::ContinualPlanningState ContinualPlanning::loop()
     _status.startedExecution(_currentPlan.actions.front()); 
     if(!_planExecutor.executeBlocking(_currentPlan, _currentState, executedActions)) {
         _status.finishedExecution(false, _currentPlan.actions.front());
-        ROS_ERROR_STREAM("No action was executed for current plan:\n" << _currentPlan << "\nWaiting for 10 sec...");
+        ROS_ERROR_STREAM("No action was executed for current plan:\n" << _currentPlan << "\n");//Waiting for 10 sec...");
         _forceReplan = true;        // force here in the hope that it fixes something.
-        ros::WallDuration sleep(10.0);
-        sleep.sleep();
+        //ros::WallDuration sleep(10.0);
+        //sleep.sleep();
     } else {
         _status.finishedExecution(true, _currentPlan.actions.front());
     }

@@ -56,8 +56,8 @@ class ActionExecutorActionlib : public continual_planning_executive::ActionExecu
        * \param [in] result the result returned by the action
        * \param [in, out] current the current planner state to be updated
        */
-      virtual void updateState(const actionlib::SimpleClientGoalState & actionReturnState, const ActionResult & result,
-              const DurativeAction & a, SymbolicState & current) {}
+      //virtual void updateState(const actionlib::SimpleClientGoalState & actionReturnState, const ActionResult & result,
+        //      const DurativeAction & a, SymbolicState & current) {}
 
       /// just cancelAllGoals
       virtual void cancelAction();
@@ -110,7 +110,7 @@ bool ActionExecutorActionlib<Action, ActionGoal, ActionResult>::canExecute(
 }
 
 template <class Action, class ActionGoal, class ActionResult>
-bool ActionExecutorActionlib<Action, ActionGoal, ActionResult>::executeBlocking(const DurativeAction & a, SymbolicState & current)
+bool ActionExecutorActionlib<Action, ActionGoal, ActionResult>::executeBlocking(const DurativeAction & a, const SymbolicState & current)
 {
     ActionGoal goal;
     if(!fillGoal(goal, a, current)) {
@@ -123,7 +123,7 @@ bool ActionExecutorActionlib<Action, ActionGoal, ActionResult>::executeBlocking(
     // blocking call
     _actionClient->waitForResult();
 
-    updateState(_actionClient->getState(), *(_actionClient->getResult()), a, current);
+  //  updateState(_actionClient->getState(), *(_actionClient->getResult()), a, current);
 
     if(_actionClient->getState() == actionlib::SimpleClientGoalState::SUCCEEDED) {
         ROS_INFO("Reached goal for action: %s.", _actionName.c_str());

@@ -37,7 +37,7 @@ class ActionExecutorService : public continual_planning_executive::ActionExecuto
       virtual bool canExecute(const DurativeAction & a, const SymbolicState & current) const;
 
       /// Executes the action using SimpleActionClient.
-      virtual bool executeBlocking(const DurativeAction & a, SymbolicState & current);
+      virtual bool executeBlocking(const DurativeAction & a, const SymbolicState & current);
 
       /// Fill the goal to execute this action.
       /**
@@ -56,8 +56,8 @@ class ActionExecutorService : public continual_planning_executive::ActionExecuto
        * \param [in] a the action that was executed
        * \param [in, out] current the current planner state to be updated
        */
-      virtual void updateState(bool & success, typename Service::Response & response,
-              const DurativeAction & a, SymbolicState & current) {ROS_INFO("ActionExecutorService: default implementation without state update.");}
+      //virtual void updateState(bool & success, typename Service::Response & response,
+        //      const DurativeAction & a, SymbolicState & current) {ROS_INFO("ActionExecutorService: default implementation without state update.");}
 
       /// can't really do anything here
       virtual void cancelAction() {}
@@ -114,7 +114,7 @@ bool ActionExecutorService<Service>::canExecute(
 }
 
 template <class Service>
-bool ActionExecutorService<Service>::executeBlocking(const DurativeAction & a, SymbolicState & current)
+bool ActionExecutorService<Service>::executeBlocking(const DurativeAction & a, const SymbolicState & current)
 {
     Service service;
     if(!fillGoal(service.request, a, current)) {
