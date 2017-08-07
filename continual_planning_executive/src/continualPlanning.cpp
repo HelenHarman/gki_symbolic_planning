@@ -147,6 +147,7 @@ bool ContinualPlanning::estimateInitialStateAndGoal()
     {
         _initialStateEstimated &= gc->fillStateAndGoal(_currentState, _goal);
     }
+
     return _initialStateEstimated;
 }
 

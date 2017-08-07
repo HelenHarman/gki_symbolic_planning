@@ -15,6 +15,7 @@
 #include <ros/package.h>
 
 ContinualPlanning* continualPlanning = NULL;
+std::string pluginNamespace = "";
 
 static pluginlib::ClassLoader<continual_planning_executive::PlannerInterface>* s_PlannerLoader = NULL;
 static pluginlib::ClassLoader<continual_planning_executive::StateCreator>* s_StateCreatorLoader = NULL;
@@ -51,7 +52,7 @@ bool loadStateCreators(ros::NodeHandle & nh)
     }
 
     XmlRpc::XmlRpcValue xmlRpc;
-    if (!nh.getParam("state_creators", xmlRpc))
+    if (!nh.getParam(pluginNamespace + "state_creators", xmlRpc))
     {
         ROS_ERROR("No state_creators defined.");
         return false;
@@ -112,7 +113,7 @@ bool loadGoalCreators(ros::NodeHandle & nh)
     }
 
     XmlRpc::XmlRpcValue xmlRpc;
-    if (!nh.getParam("goal_creators", xmlRpc))
+    if (!nh.getParam(pluginNamespace + "goal_creators", xmlRpc))
     {
         ROS_ERROR("No goal_creators defined.");
         return false;
@@ -171,7 +172,7 @@ bool loadActionExecutors(ros::NodeHandle & nh)
     }
 
     XmlRpc::XmlRpcValue xmlRpc;
-    if (!nh.getParam("action_executors", xmlRpc))
+    if (!nh.getParam(pluginNamespace + "action_executors", xmlRpc))
     {
         ROS_ERROR("No action_executors defined.");
         return false;
@@ -274,7 +275,7 @@ bool loadPlanner(ros::NodeHandle & nh)
 
     // get domain
     std::string domainFile;
-    if (!nh.getParam("domain_file", domainFile))
+    if (!nh.getParam(pluginNamespace + "domain_file", domainFile))
     {
         ROS_ERROR("Could not get ~domain_file parameter.");
         return false;
@@ -297,31 +298,38 @@ bool loadPlanner(ros::NodeHandle & nh)
     return true;
 }
 
-bool load_plugins(ContinualPlanning* cp)
+bool load_plugins(ContinualPlanning* cp, std::string pluginNs)
 {
     ros::NodeHandle nhPriv("~");
     continualPlanning = cp;
+	pluginNamespace = pluginNs;
 
     // planner
-    if (!loadPlanner(nhPriv))
+    if (!loadPlanner(nhPriv)) {
         return false;
-    ROS_INFO("Loaded planner.");
-
+	} else {
+    	ROS_INFO("Loaded planner.");
+	}
     // state creators
-    if (!loadStateCreators(nhPriv))
-        return false;
-    ROS_INFO("Loaded state creators.");
-
+    if (!loadStateCreators(nhPriv)) {
+    	ROS_WARN("Failed to load state creators.");
+	} else {
+    	ROS_INFO("Loaded state creators.");
+	}
     // goal
-    if (!loadGoalCreators(nhPriv))
-        return false;
-    ROS_INFO("Loaded goal creators.");
-
+    if (!loadGoalCreators(nhPriv)) {
+    	ROS_WARN("Failed to load goal creators.");
+	} else {
+    	ROS_INFO("Loaded goal creators.");
+	}
     // actions
-    if (!loadActionExecutors(nhPriv))
-        return false;
-    ROS_INFO("Loaded action executors.");
+    if (!loadActionExecutors(nhPriv)){
+    	ROS_WARN("Failed to load action executors.");
+	} else {
+    	ROS_INFO("Loaded action executors.");
+	}
 
+	pluginNamespace = "";
     return true;
 }
 

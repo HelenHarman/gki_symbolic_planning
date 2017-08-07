@@ -55,6 +55,9 @@ class ContinualPlanning
          */
         ContinualPlanningState loop();
 
+		void setGoal(SymbolicState goal)  { _goal = goal; }; //TODO move to .cpp
+		void setInitialState(SymbolicState currentState) { _currentState = currentState; }; //TODO move to .cpp
+
         /// Update _currentState from the world.
         bool estimateInitialStateAndGoal();
         bool estimateCurrentState();
