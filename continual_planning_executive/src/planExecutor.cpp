@@ -36,6 +36,11 @@ void PlanExecutor::checkActionTimesFile()
     }
 }
 
+void PlanExecutor::clear()
+{
+    _actionExecutors.clear();
+}
+
 void PlanExecutor::addActionExecutor(boost::shared_ptr<continual_planning_executive::ActionExecutorInterface> ae)
 {
     _actionExecutors.push_back(ae);

@@ -43,6 +43,21 @@ void ContinualPlanning::reset()
     _goal = SymbolicState();
 }
 
+void ContinualPlanning::cancel()
+{
+	_planExecutor.cancelAllActions();
+	forceReplanning();
+}
+
+
+void ContinualPlanning::clear()
+{
+	reset();
+	_stateCreators.clear();
+	_goalCreators.clear();
+	_planExecutor.clear();
+}
+
 ContinualPlanning::ContinualPlanningState ContinualPlanning::loop()
 {
     if (! _initialStateEstimated)
@@ -147,7 +162,6 @@ bool ContinualPlanning::estimateInitialStateAndGoal()
     {
         _initialStateEstimated &= gc->fillStateAndGoal(_currentState, _goal);
     }
-
     return _initialStateEstimated;
 }
 

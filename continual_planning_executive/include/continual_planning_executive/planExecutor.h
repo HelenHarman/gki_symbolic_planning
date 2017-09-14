@@ -20,7 +20,7 @@ class PlanExecutor
 
         /// send a cancel signal to all actions.
         void cancelAllActions();
-
+		void clear();
     protected:
         void checkActionTimesFile();
 

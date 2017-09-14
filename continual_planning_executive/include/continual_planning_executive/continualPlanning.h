@@ -78,7 +78,8 @@ class ContinualPlanning
         void setPlanner(boost::shared_ptr<continual_planning_executive::PlannerInterface> pi);
 
         void reset();
-
+		void cancel();
+		void clear();
     protected:
         /// Return a plan that reaches the goal.
         /**

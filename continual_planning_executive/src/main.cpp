@@ -155,10 +155,10 @@ int main(int argc, char** argv)
     ros::AsyncSpinner spinner(4); // Use 4 threads
     spinner.start();
     while(ros::ok()) {
-//        ros::spinOnce();
-
+        //ros::spinOnce();
         if(s_ContinualPlanningMode == continual_planning_msgs::SetContinualPlanningControl::Request::RUN
             || s_ContinualPlanningMode == continual_planning_msgs::SetContinualPlanningControl::Request::STEP) {
+
             cpState = s_ContinualPlanning->loop();
             if(cpState != ContinualPlanning::Running) {
                 break;
@@ -170,7 +170,6 @@ int main(int argc, char** argv)
 
         loopSleep.sleep();
     }
-
     if(s_ContinualPlanning->isGoalFulfilled() || cpState == ContinualPlanning::FinishedAtGoal) {
         std::stringstream ss2;
         ss2 << "\n\nContinual planning ended.\n";

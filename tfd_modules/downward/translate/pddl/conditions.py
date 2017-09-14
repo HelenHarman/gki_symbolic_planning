@@ -67,6 +67,7 @@ def parse_durative_condition(alist):
         return [Truth(), Truth(),Truth()]
     tag = alist[0]
     if tag == "and":
+        print(alist)
         args = alist[1:]
         parts = [parse_durative_condition(part) for part in args]
         parts_begin = [part[0] for part in parts]
@@ -397,21 +398,27 @@ class Literal(Condition):
         return result
 
 class Atom(Literal):
-    negated = False
-    def to_untyped_strips(self):
-        return [self]
-    def instantiate(self, var_mapping, init_facts, fluent_facts, init_function_vals,
+	negated = False
+	def to_untyped_strips(self):
+		return [self]
+	def instantiate(self, var_mapping, init_facts, fluent_facts, init_function_vals,
                     fluent_functions, task, new_axiom, new_modules, result):
-        args = [var_mapping.get(arg, arg) for arg in self.args]
-        atom = Atom(self.predicate, args)
-        if atom in fluent_facts:
-            result.append(atom)
-        elif atom not in init_facts:
-            raise Impossible()
-    def negate(self):
-        return NegatedAtom(self.predicate, self.args)
-    def positive(self):
-        return self
+		args = [var_mapping.get(arg, arg) for arg in self.args]
+		atom = Atom(self.predicate, args)
+		
+		if atom in fluent_facts:
+			result.append(atom)
+		elif atom not in init_facts:
+			#print("ATOM:")
+			#print(self.predicate)
+			#print(atom)
+			#for fact in init_facts:
+			#	print(fact)
+			raise Impossible()
+	def negate(self):
+		return NegatedAtom(self.predicate, self.args)
+	def positive(self):
+		return self
 
 class NegatedAtom(Literal):
     negated = True
